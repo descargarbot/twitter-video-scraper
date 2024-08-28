@@ -291,7 +291,12 @@ if __name__ == "__main__":
     # use case example
 
     # set x/tw video url
-    tw_post_url = "your x/twitter video post"
+    tw_post_url = ''
+    if tw_post_url == '':
+        if len(sys.argv) < 2:
+            print('you must provide a x/twitter url')
+            exit()
+        tw_post_url = sys.argv[1]
 
     # create scraper video object
     tw_video = TwitterVideoScraper()
