@@ -69,9 +69,11 @@
 
     tw_video.tw_session.close()
     
-  or you can use the CLI
+  > [!NOTE]\
+  > you can use the CLI
   <br><br>
-  <code>python3 twitter_video_scraper.py TWITTER_URL</code>
+  > <code>python3 twitter_video_scraper.py TWITTER_URL</code>
+  
 <br><br>
 <h2>online</h2>
 <ul>
