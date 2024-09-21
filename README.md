@@ -74,7 +74,7 @@
   <br><br>
   > <code>python3 twitter_video_scraper.py TWITTER_URL</code>
   
-<br><br>
+<br>
 <h2>online</h2>
 <ul>
   ⤵
