@@ -257,6 +257,30 @@ class TwitterVideoScraper:
         return fixed_video_list
 
 
+    def get_video_filesize(self, video_url_list: list) -> list:
+        """ Get file size by requesting a small portion of the file """
+
+        items_filesize = []
+        for video_url in video_url_list:
+            try:
+                headers = self.headers.copy()
+                headers.update({"Range": "bytes=0-1023"})
+                video_size = self.tw_session.get(video_url, headers=headers, proxies=self.proxies)
+                content_range = video_size.headers.get('Content-Range')
+                if content_range:
+                    total_size = int(content_range.split('/')[-1])
+                    items_filesize.append(total_size / 1024 / 1024)
+                    print(items_filesize)
+                else:
+                    print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
+                    raise SystemExit("Error Content-Range header missing")
+            except Exception as e:
+                print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
+                raise SystemExit('Error getting video size')
+        
+        return items_filesize
+
+    '''
     def get_video_filesize(self, video_url_list: list) -> str:
         """ get file size of requested video """
 
@@ -270,6 +294,7 @@ class TwitterVideoScraper:
                 raise SystemExit('error getting video size')
 
         return items_filesize
+    '''
 
     '''
     def search_dict_key(self, key: str, json: dict):
