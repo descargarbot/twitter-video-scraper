@@ -92,11 +92,11 @@ class TwitterVideoScraper:
     def get_guest_token(self) -> None:
         """ this method get the guest token, and set it in cookies session """
 
-        guest_token_endpoint = 'https://api.twitter.com/1.1/guest/activate.json'
+        guest_token_endpoint = 'https://api.x.com/1.1/guest/activate.json'
         try:
             guest_token = self.tw_session.post(guest_token_endpoint, headers=self.headers, proxies=self.proxies).json()["guest_token"]
             
-            self.tw_session.cookies.set('gt', guest_token, domain='.twitter.com')
+            self.tw_session.cookies.set('gt', guest_token, domain='.x.com')
 
         except Exception as e:
             print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
@@ -110,7 +110,7 @@ class TwitterVideoScraper:
         self.headers['x-guest-token'] = self.tw_session.cookies.get('gt')
 
         #tw_post_endpoint = "https://twitter.com/i/api/graphql/0hWvDhmW8YQ-S_ib3azIrw/TweetResultByRestId"
-        tw_post_endpoint = "https://twitter.com/i/api/graphql/2ICDjqPd81tulZcYrtpTuQ/TweetResultByRestId"  #both works
+        tw_post_endpoint = "https://x.com/i/api/graphql/2ICDjqPd81tulZcYrtpTuQ/TweetResultByRestId"  #both works
 
         variables_tw_post['tweetId'] = rest_id
 
@@ -140,9 +140,6 @@ class TwitterVideoScraper:
         except Exception as e:
             print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
             raise SystemExit('error getting video data from post details')
-
-        #print(post_details)
-        #exit()
 
         video_variants_list = []
         thumbnails = []
@@ -257,30 +254,6 @@ class TwitterVideoScraper:
         return fixed_video_list
 
 
-    def get_video_filesize(self, video_url_list: list) -> list:
-        """ Get file size by requesting a small portion of the file """
-
-        items_filesize = []
-        for video_url in video_url_list:
-            try:
-                headers = self.headers.copy()
-                headers.update({"Range": "bytes=0-1023"})
-                video_size = self.tw_session.get(video_url, headers=headers, proxies=self.proxies)
-                content_range = video_size.headers.get('Content-Range')
-                if content_range:
-                    total_size = int(content_range.split('/')[-1])
-                    items_filesize.append(total_size / 1024 / 1024)
-                    print(items_filesize)
-                else:
-                    print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
-                    raise SystemExit("Error Content-Range header missing")
-            except Exception as e:
-                print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
-                raise SystemExit('Error getting video size')
-        
-        return items_filesize
-
-    '''
     def get_video_filesize(self, video_url_list: list) -> str:
         """ get file size of requested video """
 
@@ -294,7 +267,6 @@ class TwitterVideoScraper:
                 raise SystemExit('error getting video size')
 
         return items_filesize
-    '''
 
     '''
     def search_dict_key(self, key: str, json: dict):
