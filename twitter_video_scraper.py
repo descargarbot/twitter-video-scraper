@@ -109,7 +109,7 @@ class TwitterVideoScraper:
 
         self.headers['x-guest-token'] = self.tw_session.cookies.get('gt')
 
-        #tw_post_endpoint = "https://twitter.com/i/api/graphql/0hWvDhmW8YQ-S_ib3azIrw/TweetResultByRestId"
+        #tw_post_endpoint = "https://x.com/i/api/graphql/0hWvDhmW8YQ-S_ib3azIrw/TweetResultByRestId"
         tw_post_endpoint = "https://x.com/i/api/graphql/2ICDjqPd81tulZcYrtpTuQ/TweetResultByRestId"  #both works
 
         variables_tw_post['tweetId'] = rest_id
