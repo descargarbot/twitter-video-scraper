@@ -5,6 +5,7 @@ import random
 import urllib.parse
 import os
 import sys
+from typing import Optional
 
 #####################################################################
 # variables and features to send a post details request without login
@@ -58,7 +59,7 @@ class TwitterVideoScraper:
         
         self.headers = {
             'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
+            'user-agent': '',
         }
 
         self.proxies = {
@@ -254,19 +255,42 @@ class TwitterVideoScraper:
         return fixed_video_list
 
 
-    def get_video_filesize(self, video_url_list: list) -> str:
+    def get_video_filesize(self, video_url_list: list) -> list:
         """ get file size of requested video """
 
         items_filesize = []
         for video_url in video_url_list:
-            try:
-                video_size = self.tw_session.head(video_url, headers=self.headers, proxies=self.proxies)
-                items_filesize.append(video_size.headers['content-length'])
-            except Exception as e:
-                print(e, "\nError on line {}".format(sys.exc_info()[-1].tb_lineno))
+            video_size = self.get_content_length(video_url)
+
+            if video_size == None:
                 raise SystemExit('error getting video size')
 
+            items_filesize.append(video_size/1024/1024)
+
         return items_filesize
+    
+    def get_content_length(self, url: str) -> Optional[int]:
+        headers = {'user-agent': 'Twitterbot/1.0'}
+        
+        for attempt in range(50):
+            try:
+                resp_head = requests.head(url, headers=headers, allow_redirects=True)
+                if 'content-length' in resp_head.headers:
+                    return int(resp_head.headers['content-length'])
+                
+                with requests.get(url, headers={**headers, 'Range': 'bytes=0-0'}, stream=True) as resp_get:
+                    if 'Content-Length' in resp_get.headers:
+                        return int(resp_get.headers['Content-Length'])
+                    
+                    resp_full = requests.get(url, headers=headers, stream=True)
+                    resp_full.close()
+                    return int(resp_full.headers.get('Content-Length', 0))
+                    
+            except (requests.RequestException, KeyError, ValueError) as e:
+                print(f"retrie {attempt + 1} fail: {str(e)}")
+                time.sleep(1)
+        
+        return None
 
     '''
     def search_dict_key(self, key: str, json: dict):
