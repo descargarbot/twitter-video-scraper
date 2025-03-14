@@ -217,6 +217,7 @@ class TwitterVideoScraper:
                 raise SystemExit('error downloading video')
 
             path_filename = video_url.split('?')[0].split('/')[-1]
+            path_filename = f'DescargarBot_{path_filename}'
             try:
                 with open(path_filename, 'wb') as f:
                     for chunk in video.iter_content(chunk_size=1024):
@@ -231,9 +232,10 @@ class TwitterVideoScraper:
 
         return downloaded_video_list
 
-
+    """
+    # not used for now. x/tw is delivering the video with the correct format
+    
     def ffmpeg_fix(self, downloaded_video_list: list) -> list:
-        """ fix video to make it shareable """
 
         fixed_video_list = []
         for video in downloaded_video_list:
@@ -255,7 +257,7 @@ class TwitterVideoScraper:
                 raise SystemExit('ffmpeg error fixing video')
 
         return fixed_video_list
-
+     """
 
     def get_video_filesize(self, video_url_list: list) -> list:
         """ get file size of requested video """
@@ -294,19 +296,6 @@ class TwitterVideoScraper:
         
         return None
 
-    '''
-    def search_dict_key(self, key: str, json: dict):
-        """ busca en un json (tipo lista y/o dict) por una key
-            retorna el valor de el o los valores encontrados con esa key """
-
-        for k, v in (json.items() if isinstance(json, dict) else enumerate(json) if isinstance(json, list) else []):
-            if k == key:
-                yield v
-            elif isinstance(v, (dict, list)):
-                for result in self.search_dict_key(key, v):
-                    yield result
-    '''
-
 ##################################################################
 
 if __name__ == "__main__":
@@ -340,15 +329,14 @@ if __name__ == "__main__":
         raise SystemExit('nsfw post, login')
 
     # get item filesize
-    #items_filesize = tw_video.get_video_filesize(video_url_list)
-    #[print('filesize: ~' + filesize + ' bytes') for filesize in items_filesize]
+    items_filesize = tw_video.get_video_filesize(video_url_list)
+    [print('filesize: ~' + str(filesize) + ' bytes') for filesize in items_filesize]
 
     # download video by url
     downloaded_video_list = tw_video.download(video_url_list)
 
-    # fix video to make it shareable (optional, but e.g android reject the default format)
-    # remember install ffmpeg to use this method
-    fixed_video_list = tw_video.ffmpeg_fix(downloaded_video_list)
+    # not used for now. x/tw is delivering the video with the correct format
+    # fixed_video_list = tw_video.ffmpeg_fix(downloaded_video_list)
 
     tw_video.tw_session.close()
     
