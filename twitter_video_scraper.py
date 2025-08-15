@@ -132,7 +132,13 @@ class TwitterVideoScraper:
                 return [],[], True # nsfw content
 
         except KeyError:
-            pass # sfw post
+            try:
+                tweet_type = post_details['data']['tweetResult']['result']['__typename']
+                if tweet_type == 'TweetTombstone':
+                    return [],[], True # nsfw content
+            except KeyError:
+                pass # sfw post
+
 
         # videos, but u have all tweet data in post_details
         try:
