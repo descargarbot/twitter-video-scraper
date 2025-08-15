@@ -128,7 +128,7 @@ class TwitterVideoScraper:
         # return becouse u need to use TwitterVideoScraperLogin class
         try:
             reason = post_details['data']['tweetResult']['result']['reason']
-            if reason == 'NsfwLoggedOut':
+            if reason == 'NsfwLoggedOut' or reason == 'NsfwViewerHasNoStatedAge':
                 return [],[], True # nsfw content
 
         except KeyError:
