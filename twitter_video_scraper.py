@@ -6,6 +6,7 @@ import urllib.parse
 import os
 import sys
 from typing import Optional
+import time
 
 #####################################################################
 # variables and features to send a post details request without login
@@ -336,7 +337,7 @@ if __name__ == "__main__":
 
     # get item filesize
     items_filesize = tw_video.get_video_filesize(video_url_list)
-    [print('filesize: ~' + str(filesize) + ' bytes') for filesize in items_filesize]
+    [print('filesize: ~' + str(filesize) + ' MB') for filesize in items_filesize]
 
     # download video by url
     downloaded_video_list = tw_video.download(video_url_list)
